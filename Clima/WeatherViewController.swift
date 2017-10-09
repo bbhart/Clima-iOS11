@@ -7,9 +7,9 @@
 //
 
 import UIKit
+import CoreLocation
 
-
-class WeatherViewController: UIViewController {
+class WeatherViewController: UIViewController, CLLocationManagerDelegate {
     
     //Constants
     let WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
@@ -19,8 +19,8 @@ class WeatherViewController: UIViewController {
     
 
     //TODO: Declare instance variables here
-    
-
+    let locationManager : CLLocationManager = CLLocationManager()
+    var userLocation : CLLocation!
     
     //Pre-linked IBOutlets
     @IBOutlet weak var weatherIcon: UIImageView!
@@ -33,7 +33,11 @@ class WeatherViewController: UIViewController {
         
         
         //TODO:Set up the location manager here.
-    
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        
+        locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+        locationManager.startUpdatingLocation()
         
         
     }
@@ -44,7 +48,7 @@ class WeatherViewController: UIViewController {
     /***************************************************************/
     
     //Write the getWeatherData method here:
-    
+
 
     
     
@@ -77,11 +81,23 @@ class WeatherViewController: UIViewController {
     
     
     //Write the didUpdateLocations method here:
-    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        userLocation = locations[0]
+        let lat = userLocation.coordinate.latitude
+        let lon = userLocation.coordinate.longitude
+        
+        print("Location updated: lat=\(lat), lon=\(lon)")
+        
+        // Found location, so stop updating
+        locationManager.stopUpdatingLocation()
+        
+    }
     
     
     //Write the didFailWithError method here:
-    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error updating location: \(error)")
+    }
     
     
 
